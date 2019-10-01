@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="en">
 <head>
     <title>Bootstrap 4 Portfolio/Resume Theme for Developers</title>
@@ -34,10 +33,10 @@
     <!-- ******HEADER****** --> 
     <header class="header">
         <div class="container clearfix">                       
-            <img class="profile-image img-fluid float-left" src="assets/images/profile.png" alt="James Lee" />
+            <img class="profile-image img-fluid float-left" src="assets/images/profile.jpg" alt="Jesus Rodriguez" />
             <div class="profile-content float-left">
-                <h1 class="name">James Lee</h1>
-                <h2 class="desc">Web App Developer</h2>   
+                <h1 class="name">Jesus Rodriguez</h1>
+                <h2 class="desc">Software Engineer</h2>   
                 <ul class="social list-inline">
                     <li class="list-inline-item"><a href="#"><i class="fab fa-twitter"></i></a></li>                   
                     <li class="list-inline-item"><a href="#"><i class="fab fa-google-plus-g"></i></a></li>
