@@ -43,4 +43,6 @@ function calcGuess(){
     guessedNumbers.appendChild(newtext);
     guessedNumbers.appendChild(br);
 
+    guess.value = '';
+
 }
