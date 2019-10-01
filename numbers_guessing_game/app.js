@@ -1,12 +1,15 @@
-let randomNumber = function randFun(){
 
-    let rand = Math.floor((Math.random() * 10) + 1);
+let randomNumber = Math.floor((Math.random() * 10) + 1);
 
-    return rand;
-}
+const guessSubmit = document.getElementById("guessSubmit");
+guessSubmit.addEventListener("click", function(event){
+    calcGuess();
+    event.preventDefault();
+});
 
-function calcGuess(){
-    let randNum = randomNumber();
+
+function calcGuess() {
+
     let guess = document.getElementById("number");
     let guessedNumbers = document.getElementById("GuessedNumbers");
     let message = document.getElementById("Message");
@@ -17,13 +20,11 @@ function calcGuess(){
         message.style.color = "black";
     }
 
-    if(randNum > parseInt(guess.value)){
+    if (randomNumber > parseInt(guess.value)) {
         message.appendChild(document.createTextNode("Your guess was too low: Guess Higher."))
-    }
-    else if(randNum< parseInt(guess.value)){
+    } else if (randomNumber < parseInt(guess.value)) {
         message.appendChild(document.createTextNode("Your guess was too high: Guess Lower."))
-    }
-    else if(randNum === parseInt(guess.value)){
+    } else if (randomNumber === parseInt(guess.value)) {
         message.appendChild(document.createTextNode("You Won!"))
         let tries = (guessedNumbers.childNodes.length / 2) + 1;
         message.appendChild(document.createTextNode(" Took You " + tries + " tries."));
@@ -33,9 +34,12 @@ function calcGuess(){
         while (guessedNumbers.firstChild) {
             guessedNumbers.removeChild(guessedNumbers.firstChild);
         }
+
+        randomNumber = Math.floor((Math.random() * 10) + 1);
+
     }
 
-    // let txt = "Random Num: " + randNum + " Guessed: " + guess.value;
+    // let txt = "Random Num: " + randomNumber + " Guessed: " + guess.value;
     let txt = "Guessed: " + guess.value;
 
     let br = document.createElement("br");
@@ -44,5 +48,4 @@ function calcGuess(){
     guessedNumbers.appendChild(br);
 
     guess.value = '';
-
 }

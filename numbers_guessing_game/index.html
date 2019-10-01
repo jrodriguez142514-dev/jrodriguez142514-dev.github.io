@@ -11,8 +11,7 @@
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
     integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
-  <link rel="stylesheet" href="styles.css">
-  <script src="app.js" async defer></script>
+  <link rel="stylesheet" href="styles.css">  
 </head>
 
 <body class="text-center">
@@ -37,7 +36,8 @@
           <input type="text" name="number" id="number" class="form-control" placeholder="Enter a number">
         </div>
         <div class="text-center">
-          <button name="Calculate_Guess" class="btn btn-primary" onclick="calcGuess(); return false;">Submit</button>
+          <input type="submit" value="Submit Guess" class="btn btn-primary" id="guessSubmit">
+          <!-- <button name="Calculate_Guess" class="btn btn-primary" onclick="calcGuess(); return false;">Submit</button> -->
         </div>
       </form>
     </div>
@@ -49,6 +49,8 @@
       </div>
     </div>
   </div>
+
+  <script src="app.js" async defer></script>
 
 </body>
 
