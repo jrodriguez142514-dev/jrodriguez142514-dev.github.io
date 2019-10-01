@@ -1,0 +1,22 @@
+/* styles.css */
+body {
+  font-family: "Helvetica Neue", sans-serif;
+  font-weight: 300;
+  text-align: center;
+
+}
+
+h1 {
+  font-weight: 400
+}
+
+nav {
+  text-align: center;
+}
+
+#mainBG {
+  background-color: lightgoldenrodyellow;
+  border: 2px;
+  border-color: red;
+  border-style: solid;
+}
