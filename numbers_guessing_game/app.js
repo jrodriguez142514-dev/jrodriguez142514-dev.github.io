@@ -26,7 +26,7 @@ function calcGuess() {
         message.appendChild(document.createTextNode("Your guess was too high: Guess Lower."))
     } else if (randomNumber === parseInt(guess.value)) {
         message.appendChild(document.createTextNode("You Won!"))
-        let tries = (guessedNumbers.childNodes.length / 2) + 1;
+        let tries = (guessedNumbers.childNodes.length / 2);
         message.appendChild(document.createTextNode(" Took You " + tries + " tries."));
 
         message.style.color = "red";
