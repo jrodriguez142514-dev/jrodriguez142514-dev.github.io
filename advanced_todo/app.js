@@ -6,6 +6,7 @@ const itemLabel = document.getElementById('itemLabel')
 const item = document.getElementById('item')
 const message = document.getElementById('Message')
 const button = document.querySelector('button')
+const btnShare = document.getElementById('btnShare')
 const submit = document.getElementById('Submit')
 const btnClear = document.getElementById('btnClear')
 
@@ -434,3 +435,18 @@ if(btnClear != null){
     }
   }, false);
 }
+
+if(btnShare != null){
+  btnShare.addEventListener('click', function() {
+    alert("share")
+    if (navigator.share) {
+      navigator.share({
+          title: 'Advanced To-Do',
+          text: litem,
+          url: 'https://jrodriguez142514-dev.github.io/advanced_todo/index.html',
+      })
+        .then(() => console.log('Successful share'))
+        .catch((error) => console.log('Error sharing', error));
+    }    
+
+  }, false)};
