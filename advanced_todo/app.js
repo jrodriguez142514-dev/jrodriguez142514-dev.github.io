@@ -418,9 +418,16 @@ if(btnShare != null){
             let listitems = JSON.parse(localStorage.getItem(localStorage.key(i)))
   
             listitems.forEach(function (litem) {
-              lItems += litem+ "\r\n";
+              if (litem.includes("active")){
+                litem = litem.slice(0, litem.indexOf("_"));
+                litems +=  litem + '\u{2611}' + "\r\n"
+              }
+              else if(litem.includes("complete")){
+                litem = litem.slice(0, litem.indexOf("_"));                
+                litem = "<s>"+litem+"</s>"
+                litems += litem + '\u{274E}' + "\r\n"
+              }
             });
-
           }catch{}
         }
       }
@@ -429,7 +436,7 @@ if(btnShare != null){
 
     if (navigator.share) {
       navigator.share({
-          title: 'Advanced To-Do' + listQuery,
+          title: 'Advanced To-Do ' + listQuery,
           text: lItems,
           url: 'https://jrodriguez142514-dev.github.io/advanced_todo/index.html',
       })
