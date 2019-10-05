@@ -418,7 +418,7 @@ if(btnShare != null){
             let listitems = JSON.parse(localStorage.getItem(localStorage.key(i)))
   
             listitems.forEach(function (litem) {
-              lItems += litemc+ "\r\n";
+              lItems += litem+ "\r\n";
             });
 
           }catch{}
