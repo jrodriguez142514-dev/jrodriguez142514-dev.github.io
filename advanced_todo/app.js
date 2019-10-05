@@ -404,7 +404,6 @@ if(btnClear != null){
 
 if(btnShare != null){
   btnShare.addEventListener('click', function() {
-    alert("share")
     let listQuery = getQueryString();
     let lItems = "";
     for (var i = 0; i < localStorage.length; i++) {
@@ -420,12 +419,11 @@ if(btnShare != null){
             listitems.forEach(function (litem) {
               if (litem.includes("active")){
                 litem = litem.slice(0, litem.indexOf("_"));
-                litems +=  litem + '\u{2611}' + "\r\n"
+                litems +=  litem + '\u{2611}' + "\r\n";
               }
               else if(litem.includes("complete")){
-                litem = litem.slice(0, litem.indexOf("_"));                
-                litem = "<s>"+litem+"</s>"
-                litems += litem + '\u{274E}' + "\r\n"
+                litem = litem.slice(0, litem.indexOf("_"));
+                litems += litem + '\u{274E}' + "\r\n";
               }
             });
           }catch{}
@@ -433,12 +431,13 @@ if(btnShare != null){
       }
     }
     // = window.encodeURIComponent(lItems);
+    alert(litems);
 
     if (navigator.share) {
       navigator.share({
           title: 'Advanced To-Do ' + listQuery,
           text: lItems,
-          url: 'https://jrodriguez142514-dev.github.io/advanced_todo/index.html',
+          url: listQuery + 'https://jrodriguez142514-dev.github.io/advanced_todo/index.html',
       })
         .then(() => console.log('Successful share'))
         .catch((error) => console.log('Error sharing', error));
