@@ -421,6 +421,7 @@ if(btnShare != null){
             listitems.forEach(function (litem) {
               if (litem.includes("active")){
                 litem = litem.slice(0, litem.indexOf("_"));
+                litem = litem.strike();
                 strItems +=  litem + " " + '\u{2705}' + "\r\n";
               }
               else if(litem.includes("complete")){
@@ -437,7 +438,7 @@ if(btnShare != null){
       navigator.share({
           title: 'Advanced To-Do ' + listname,
           text: strItems,
-          url: listname + "\r\n" + 'https://jrodriguez142514-dev.github.io/advanced_todo/index.html',
+          url: 'https://jrodriguez142514-dev.github.io/advanced_todo/index.html',
       })
         .then(() => console.log('Successful share'))
         .catch((error) => alert("Your Browser Is Not Supported")); //console.log('Error sharing', error));
