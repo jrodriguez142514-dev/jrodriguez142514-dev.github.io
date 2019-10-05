@@ -405,21 +405,35 @@ if(btnClear != null){
 if(btnShare != null){
   btnShare.addEventListener('click', function() {
     alert("share")
-    let listName = previousLists.innerHTML;
-    let listItems = "";
+    let listQuery = getQueryString();
+    let lItems = "";
+    for (var i = 0; i < localStorage.length; i++) {
+      let listname = localStorage.key(i);
+      if (listname.includes("list")) {
+        listname = listname.replace("_list", "");
+  
+        if (listname == listQuery) {
+          try {
+            JSON.parse(localStorage.getItem(localStorage.key(i)))
+            let listitems = JSON.parse(localStorage.getItem(localStorage.key(i)))
+  
+            listitems.forEach(function (litem) {
+              lItems += litem;
+            });
 
-    while (ul.firstChild) {
-      listItems += ul.firstChild.innerHTML + "\n";
+          }catch{}
+        }
+      }
     }
 
     if (navigator.share) {
       navigator.share({
-          title: 'Advanced To-Do',
-          text: listName + "\n" + listItems,
+          title: 'Advanced To-Do' + listQuery,
+          text: lItems,
           url: 'https://jrodriguez142514-dev.github.io/advanced_todo/index.html',
       })
         .then(() => console.log('Successful share'))
-        .catch((error) => console.log('Your Browser May Not Support This Feature. Error sharing.', error));
+        .catch((error) => console.log('Error sharing', error));
     }    
 
   }, false)};
