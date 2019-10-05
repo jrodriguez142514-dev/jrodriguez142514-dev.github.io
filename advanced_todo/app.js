@@ -425,6 +425,7 @@ if(btnShare != null){
         }
       }
     }
+    lItems = window.encodeURIComponent(lItems);
 
     if (navigator.share) {
       navigator.share({
