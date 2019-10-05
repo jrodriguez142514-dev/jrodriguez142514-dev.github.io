@@ -406,8 +406,9 @@ if(btnShare != null){
   btnShare.addEventListener('click', function() {
     let listQuery = getQueryString();
     let strItems = "";
+    let listname = "";
     for (var i = 0; i < localStorage.length; i++) {
-      let listname = localStorage.key(i);
+      listname = localStorage.key(i);
       if (listname.includes("list")) {
         listname = listname.replace("_list", "");
   
@@ -415,32 +416,31 @@ if(btnShare != null){
           try {
             JSON.parse(localStorage.getItem(localStorage.key(i)))
             let listitems = JSON.parse(localStorage.getItem(localStorage.key(i)))
-  
+            
+            strItems += listname + "\r\n" + "\r\n";
             listitems.forEach(function (litem) {
               if (litem.includes("active")){
                 litem = litem.slice(0, litem.indexOf("_"));
-                strItems +=  litem + '\u{2611}' + "\r\n";
+                strItems +=  litem + " " + '\u{2705}' + "\r\n";
               }
               else if(litem.includes("complete")){
                 litem = litem.slice(0, litem.indexOf("_"));
-                strItems += litem + '\u{274E}' + "\r\n";
+                strItems += litem + " " + '\u{274C}' + "\r\n";
               }
             });
           }catch{}
         }
       }
     }
-    // = window.encodeURIComponent(strItems);
-    alert(strItems);
 
     if (navigator.share) {
       navigator.share({
-          title: 'Advanced To-Do ' + listQuery,
+          title: 'Advanced To-Do ' + listname,
           text: strItems,
-          url: listQuery + 'https://jrodriguez142514-dev.github.io/advanced_todo/index.html',
+          url: listname + "\r\n" + 'https://jrodriguez142514-dev.github.io/advanced_todo/index.html',
       })
         .then(() => console.log('Successful share'))
-        .catch((error) => console.log('Error sharing', error));
+        .catch((error) => alert("Your Browser Is Not Supported")); //console.log('Error sharing', error));
     }    
 
   }, false)};
