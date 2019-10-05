@@ -436,12 +436,15 @@ if(btnShare != null){
 
     if (navigator.share) {
       navigator.share({
-          title: 'Advanced To-Do ' + listname,
+          title: 'Advanced To-Do ' + listQuery,
           text: strItems,
           url: 'https://jrodriguez142514-dev.github.io/advanced_todo/index.html',
       })
         .then(() => console.log('Successful share'))
         .catch((error) => alert("Your Browser Is Not Supported")); //console.log('Error sharing', error));
     }    
+
+    strItems = '';
+    listname = '';
 
   }, false)};
