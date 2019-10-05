@@ -418,14 +418,14 @@ if(btnShare != null){
             let listitems = JSON.parse(localStorage.getItem(localStorage.key(i)))
   
             listitems.forEach(function (litem) {
-              lItems += litem;
+              lItems += litemc+ "\r\n";
             });
 
           }catch{}
         }
       }
     }
-    lItems = window.encodeURIComponent(lItems);
+    // = window.encodeURIComponent(lItems);
 
     if (navigator.share) {
       navigator.share({
