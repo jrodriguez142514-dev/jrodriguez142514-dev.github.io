@@ -295,19 +295,6 @@ function getPreviousListsQuery(listQuery) {
         return false;
       }
     }
-    // else{
-    //   let item = (localStorage.getItem(localStorage.key(i)))
-    // }
-
-
-
-
-    // get list items
-    // listitems.forEach(item => {
-    //   let li = document.createElement('li');
-    //   li.textContent = item;
-    //   previousLists.appendChild(li);
-    // })
   }
 }
 
@@ -339,19 +326,6 @@ function getPreviousLists() {
         return false;
       }
     }
-    // else{
-    //   let item = (localStorage.getItem(localStorage.key(i)))
-    // }
-
-
-
-
-    // get list items
-    // listitems.forEach(item => {
-    //   let li = document.createElement('li');
-    //   li.textContent = item;
-    //   previousLists.appendChild(li);
-    // })
   }
 }
 
@@ -366,14 +340,6 @@ function getListItem() {
     });
   }
 };
-
-// button.addEventListener('click', function () {
-//   localStorage.clear();
-//   while (ul.firstChild) {
-//     ul.removeChild(ul.firstChild);
-//   }
-//   itemsArray = [];
-// });
 
 let getQueryString = function () {
   const urlParams = new URLSearchParams(window.location.search);
@@ -439,14 +405,21 @@ if(btnClear != null){
 if(btnShare != null){
   btnShare.addEventListener('click', function() {
     alert("share")
+    let listName = previousLists.innerHTML;
+    let listItems = "";
+
+    while (ul.firstChild) {
+      listItems += ul.firstChild.innerHTML + "\n";
+    }
+
     if (navigator.share) {
       navigator.share({
           title: 'Advanced To-Do',
-          text: "List Items",
+          text: listName + "\n" + listItems,
           url: 'https://jrodriguez142514-dev.github.io/advanced_todo/index.html',
       })
         .then(() => console.log('Successful share'))
-        .catch((error) => console.log('Error sharing', error));
+        .catch((error) => console.log('Your Browser May Not Support This Feature. Error sharing.', error));
     }    
 
   }, false)};
