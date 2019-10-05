@@ -421,11 +421,11 @@ if(btnShare != null){
             listitems.forEach(function (litem) {
               if (litem.includes("active")){
                 litem = litem.slice(0, litem.indexOf("_"));
-                litem = litem.strike();
                 strItems +=  litem + " " + '\u{2705}' + "\r\n";
               }
               else if(litem.includes("complete")){
                 litem = litem.slice(0, litem.indexOf("_"));
+                litem = '~'+litem+'~'; 
                 strItems += litem + " " + '\u{274C}' + "\r\n";
               }
             });
