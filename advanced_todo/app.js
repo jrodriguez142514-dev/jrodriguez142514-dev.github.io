@@ -442,7 +442,7 @@ if(btnShare != null){
     if (navigator.share) {
       navigator.share({
           title: 'Advanced To-Do',
-          text: litem,
+          text: "List Items",
           url: 'https://jrodriguez142514-dev.github.io/advanced_todo/index.html',
       })
         .then(() => console.log('Successful share'))
