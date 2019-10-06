@@ -1,9 +1,9 @@
-# Simple Todo Page
-We now have all the basic tools of the front end at our disposal. Let's put them to work by creating a To-Do List application.
-
-## Steps:
-* Create your HTML/CSS/JS files
-* Display a list of items that you need to do. Use local storage to get/remove/add these items.
-* Create a form at the bottom of the list to add more things to your todo list
-* Create the ability to check off things from your todo list. When you check things off, make sure that has a ~~strikethrough~~ so that you know what you've already done. This will probably alter the data structure you have in local storage.
-* Style it! We will be learning [Bootstrap](https://getbootstrap.com/) tomorrow so you can jump ahead if you'd like but other than that, you can use basic CSS
+# Advanced Todo Page
+<h5>**New** Share Feature! ***In Beta***</h5>
+<h5>**New** Delete Individual Items From List Feature!</h5>
+<h5>**New** Import List Feature!</h5>
+    
+<div class="text-center">
+                                        
+    <p>An Advanced To-Do List Application Example Using Bootstrap Forms. The Advanced To-Do List Application Example helps you understand local storage, Bootstrap, and DOM manipulation. You can create a new list as a guest and the next time you visit the page it will remember you. It will also show you all your previous lists. You can then select a list and add to the list. You can also add a new list by clicking the Add button. Differences between Simple To-Do: The Advanced To-Do incorporates custom styling for the BootStrap navbar. The Advanced To-Do also lets you delete lists. The Advanced To-Do lets you check off an item from the list. Check it out and make some awesome lists!</p>
+</div>
