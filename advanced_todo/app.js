@@ -9,8 +9,18 @@ const button = document.querySelector('button')
 const btnShare = document.getElementById('btnShare')
 const submit = document.getElementById('Submit')
 const btnClear = document.getElementById('btnClear')
+const txtAreaImportList = document.getElementById('txtAreaImportList')
 
-// let itemsArray = localStorage.getItem('items') ? JSON.parse(localStorage.getItem('items')) : []
+
+let getUrl = function () {
+  let uri = location.href.split("/").slice(-1).toString();
+  if (uri.includes("?")) {
+    uri = uri.slice(0, uri.indexOf("?"));
+  }
+  return uri;
+};
+
+let uri = getUrl();
 
 let itemsArray = []
 
@@ -18,48 +28,92 @@ if (form != null) {
   form.addEventListener('submit', function (event) {
     event.preventDefault()
 
-    if (item.value == '' || item.value == null) {
-      message.innerHTML = "You Cannot Submit an Empty Item Value";
-    } else {
-
-      let listQuery = getQueryString();
-      if(listQuery != null){
-        let data = saveToExistingListItem(listQuery)
-
-        while (ul.firstChild) {
-          ul.removeChild(ul.firstChild);
-        }
-
-        if (data != "") {
-          data.forEach(item => {
-            makeList(item);
-          });
-        }
-      
-        // makeList(item)
-        item.value = ''
+    if (uri == "import.html") {
+      if (txtAreaImportList.value == '' || txtAreaImportList.value == null) {
+        message.innerHTML = "You Cannot Submit an Empty Item Value";
+      } else {
+        let importList = txtAreaImportList.value;
+        itemImportList(importList);
       }
-      else{
-        let data = saveListItem()
+    } else {
+      if (item.value == '' || item.value == null) {
+        message.innerHTML = "You Cannot Submit an Empty Item Value";
+      } else {
 
-        if (data != "") {
-          data.forEach(item => {
-            makeList(item);
-          });
+        let listQuery = getQueryString();
+        if (listQuery != null) {
+          let data = saveToExistingListItem(listQuery)
+
+          while (ul.firstChild) {
+            ul.removeChild(ul.firstChild);
+          }
+
+          if (data != "") {
+            data.forEach(item => {
+              makeList(item);
+            });
+          }
+
+          // makeList(item)
+          item.value = ''
+        } else {
+          let data = saveListItem()
+
+          if (data != "") {
+            data.forEach(item => {
+              makeList(item);
+            });
+          }
+
+          // makeList(item)
+          item.value = ''
         }
-      
-        // makeList(item)
-        item.value = ''
       }
     }
-
   });
 };
 
+function itemImportList(ilist) {
+
+  let data = importListItems(ilist);
+
+  while (ul.firstChild) {
+    ul.removeChild(ul.firstChild);
+  }
+
+
+  if (data != "") {
+    data.forEach(item => {
+      makeList(item);
+    });
+  }
+}
+
+function itemDelete(item) {
+
+  let listQuery = getQueryString();
+
+
+  let data = deleteExistingListItem(item, listQuery);
+
+  while (ul.firstChild) {
+    ul.removeChild(ul.firstChild);
+  }
+
+
+  if (data != "") {
+    data.forEach(item => {
+      makeList(item);
+    });
+  }
+
+  // makeList(item)
+  item.value = ''
+}
 
 
 
-function itemComplete(item){
+function itemComplete(item) {
 
   let listQuery = getQueryString();
 
@@ -103,64 +157,191 @@ function getName() {
 let makeList = function todoList(item) {
   let li = document.createElement('li');
   let button = document.createElement('button');
-  let faviconSpan = document.createElement('span');
+  let btnDel = document.createElement('button');
+  let faviconStatus = document.createElement('span');
+  let faiconDel = document.createElement('span');
+
+
   moditem = item.slice(0, item.indexOf("_"));
-  button.id = moditem;
-  button.addEventListener('click', function() {
-    itemComplete(button.id);
-  }, false);
-  
-  li.textContent = moditem
-  li.className = "list-group-item";
-  ul.appendChild(li)
-  if(item.includes("complete")){
-    li.style.setProperty("text-decoration", "line-through");
-    button.className="btn btn-danger pull-right";
-    faviconSpan.className="fa fa-times";
+  button.id = moditem;  
+  btnDel.id = moditem + "_del";
+
+  if (uri.includes("import") || uri.includes("add")) {
+    
   }
   else{
-    li.style.setProperty("text-decoration", "none !important");
-    button.className="btn btn-info pull-right";
-    faviconSpan.className="fa fa-check";
+    button.addEventListener('click', function () {
+      itemComplete(button.id);
+    }, false);
+
+    btnDel.addEventListener('click', function () {
+      itemDelete(btnDel.id);
+    }, false);
   }
-  
-  li.appendChild(button)
-  button.appendChild(faviconSpan)
-  
+
+  li.textContent = moditem;
+  li.className = "list-group-item";
+  ul.appendChild(li)
+  if (item.includes("complete")) {
+    li.style.setProperty("text-decoration", "line-through");
+    button.className = "btn btn-danger pull-right";
+    faviconStatus.className = "fa fa-times";
+  } else {
+    li.style.setProperty("text-decoration", "none !important");
+    button.className = "btn btn-info pull-right";
+    faviconStatus.className = "fa fa-check";
+  }
+
+  btnDel.className = "btn btn-danger pull-left";
+
+
+  li.appendChild(button);
+  button.appendChild(faviconStatus);
+
+  li.appendChild(btnDel);
+  btnDel.appendChild(faiconDel);
+  faiconDel.className = "fa fa-trash-o";
+
 };
+
+function getEmojiChars(text) {
+  let str = "";
+
+  if (text.match(/[\u{2705}-\u{274C}]/gu)) {
+    str = true;
+  } else {
+    str = false;
+  }
+
+  return str;
+}
+
+function importListItems(ilist) {
+  let data = '';
+  let lname = '';
+  let listItems = "";
+  let indvitem = "";
+  let itemStartIndex = 0;
+
+  if (ilist.value != "") {
+    listItems = ilist.replace(/(\r\n|\n|\r)/gm, " ");
+    listItems = listItems.replace(/\s+/g, " ");
+
+
+    let i = 0;
+    while (listItems[i]) {
+      lname += listItems[i];
+      itemStartIndex = i;
+      i++;
+      if (lname.includes("list") || lname.includes("List")) {
+        break;
+      }
+    }
+
+    k = itemStartIndex + 1;
+    for (j = k; j < listItems.length; j++) {
+      if (getEmojiChars(listItems[j]) != true) { //charcode for \ is 9989
+        indvitem += listItems[j];
+        k++;
+      } else {
+        indvitem = indvitem.trim();
+        if (listItems[j] == '\u{2705}') {
+          indvitem += '_active';
+        } else if (listItems[j] == '\u{274C}') {
+          indvitem += '_complete';
+        }
+        itemsArray.push(indvitem);
+        indvitem = '';
+      }
+    }
+
+    localStorage.setItem('items', JSON.stringify(itemsArray));
+
+    localStorage.setItem(lname + "_list", JSON.stringify(itemsArray));
+
+    data = JSON.parse(localStorage.getItem('items'));
+
+    let header = document.getElementById("headerListName");
+    header.innerHTML = lname;
+  }
+
+  itemsArray = []
+
+  return data
+}
+
+function deleteExistingListItem(item, listQuery) {
+  let data = ''
+
+  if (item != "") {
+    item = item.slice(0, item.indexOf("_"));
+    for (var i = 0; i < localStorage.length; i++) {
+      let listname = localStorage.key(i);
+      if (listname.includes("list")) {
+        if (listname == (listQuery + "_list")) {
+          try {
+            JSON.parse(localStorage.getItem(localStorage.key(i)))
+            let listitems = JSON.parse(localStorage.getItem(localStorage.key(i)))
+
+            listitems.forEach(function (litem) {
+
+              let modlitem = litem.slice(0, litem.indexOf("_"));
+
+              if (item == modlitem) {
+                itemsArray = itemsArray.filter(function (item) {
+                  return item != modlitem;
+                });
+
+              } else {
+                itemsArray.push(litem);
+              }
+            });
+          } catch {
+            return false
+          }
+        }
+      }
+    }
+
+    localStorage.setItem('items', JSON.stringify(itemsArray));
+
+    localStorage.setItem(listQuery + "_list", JSON.stringify(itemsArray));
+
+    data = JSON.parse(localStorage.getItem('items'));
+  }
+
+  itemsArray = []
+
+  return data
+}
 
 function modifyExistingListItemStatus(item, listQuery) {
   let data = ''
 
   if (item != "") {
-    
+
     for (var i = 0; i < localStorage.length; i++) {
       let listname = localStorage.key(i);
-      if (listname.includes("list")) 
-      {
-        if (listname == (listQuery + "_list")) 
-        {
+      if (listname.includes("list")) {
+        if (listname == (listQuery + "_list")) {
           try {
             JSON.parse(localStorage.getItem(localStorage.key(i)))
             let listitems = JSON.parse(localStorage.getItem(localStorage.key(i)))
-  
+
             listitems.forEach(function (litem, index) {
-              
-              if(item == litem.slice(0, litem.indexOf("_")))
-              {
-                itemsArray = itemsArray.filter(function(item){
-                  return item+"_active" != litem;
+
+              if (item == litem.slice(0, litem.indexOf("_"))) {
+                itemsArray = itemsArray.filter(function (item) {
+                  return item + "_active" != litem;
                 });
 
                 litem = litem.slice(0, litem.indexOf("_"));
-                itemsArray.push(litem+"_complete"); 
+                itemsArray.push(litem + "_complete");
+              } else {
+                itemsArray.push(litem);
               }
-              else{
-                itemsArray.push(litem); 
-              }              
             });
-          }
-          catch{
+          } catch {
             return false
           }
         }
@@ -183,29 +364,26 @@ function saveToExistingListItem(listQuery) {
   let data = ''
 
   if (item.value != "") {
-    
+
     for (var i = 0; i < localStorage.length; i++) {
       let listname = localStorage.key(i);
-      if (listname.includes("list")) 
-      {
-        if (listname == (listQuery + "_list")) 
-        {
+      if (listname.includes("list")) {
+        if (listname == (listQuery + "_list")) {
           try {
             JSON.parse(localStorage.getItem(localStorage.key(i)))
             let listitems = JSON.parse(localStorage.getItem(localStorage.key(i)))
-  
+
             listitems.forEach(function (litem) {
-              itemsArray.push(litem); 
+              itemsArray.push(litem);
             });
-          }
-          catch{
+          } catch {
             return false
           }
         }
       }
     }
 
-    itemsArray.push(item.value+"_active"); 
+    itemsArray.push(item.value + "_active");
 
     localStorage.setItem('items', JSON.stringify(itemsArray));
 
@@ -223,7 +401,7 @@ function saveListItem() {
   let data = ''
 
   if (item.value != "") {
-    itemsArray.push(item.value+"_active");
+    itemsArray.push(item.value + "_active");
 
     localStorage.setItem('items', JSON.stringify(itemsArray));
 
@@ -269,7 +447,7 @@ function getPreviousListsQuery(listQuery) {
           a.appendChild(li);
 
 
-        } catch (err){
+        } catch (err) {
           return false;
         }
       } else {
@@ -348,23 +526,20 @@ let getQueryString = function () {
   return listQuery;
 };
 
-let getUrl = function () {
-  let uri = location.href.split("/").slice(-1).toString();
-  if (uri.includes("?")) {
-    uri = uri.slice(0, uri.indexOf("?"));
-  }
-  return uri;
-};
+
 
 function addRedirect() {
   window.location.href = "add.html";
-}
+};
+
+function importRedirect() {
+  window.location.href = "import.html";
+};
 
 window.onload = function () {
   let listQuery = getQueryString();
-  let uri = getUrl();
 
-  if (uri == "index.html") {
+  if(uri == "index.html") {
     getName();
     getPreviousLists();
   } else if (uri == "selected.html") {
@@ -379,20 +554,20 @@ window.onload = function () {
   } else if (uri == "add.html") {
     getName();
   }
+  else if (uri == "import.html") {
+    getName();
+  }
 };
 
-if(btnClear != null){
-  btnClear.addEventListener('click', function() {
+if (btnClear != null) {
+  btnClear.addEventListener('click', function () {
 
-    if(confirm('This Will Delete Your List. Are You Sure?'))
-    {    
+    if (confirm('This Will Delete Your List. Are You Sure?')) {
       let listQuery = getQueryString();
-      if(listQuery == null)
-      {
-        localStorage.removeItem(listname.value+"_list");    
-      }
-      else{
-        localStorage.removeItem(listQuery+"_list");
+      if (listQuery == null) {
+        localStorage.removeItem(listname.value + "_list");
+      } else {
+        localStorage.removeItem(listQuery + "_list");
       }
       while (ul.firstChild) {
         ul.removeChild(ul.firstChild)
@@ -402,8 +577,8 @@ if(btnClear != null){
   }, false);
 }
 
-if(btnShare != null){
-  btnShare.addEventListener('click', function() {
+if (btnShare != null) {
+  btnShare.addEventListener('click', function () {
     let listQuery = getQueryString();
     let strItems = "";
     let listname = "";
@@ -411,25 +586,24 @@ if(btnShare != null){
       listname = localStorage.key(i);
       if (listname.includes("list")) {
         listname = listname.replace("_list", "");
-  
+
         if (listname == listQuery) {
           try {
             JSON.parse(localStorage.getItem(localStorage.key(i)))
             let listitems = JSON.parse(localStorage.getItem(localStorage.key(i)))
-            
+
             strItems += listname + "\r\n" + "\r\n";
             listitems.forEach(function (litem) {
-              if (litem.includes("active")){
+              if (litem.includes("active")) {
                 litem = litem.slice(0, litem.indexOf("_"));
-                strItems +=  litem + " " + '\u{2705}' + "\r\n";
-              }
-              else if(litem.includes("complete")){
+                strItems += litem + " " + '\u{2705}' + "\r\n";
+              } else if (litem.includes("complete")) {
                 litem = litem.slice(0, litem.indexOf("_"));
-                litem = '~'+litem+'~'; 
+                litem = '~' + litem + '~';
                 strItems += litem + " " + '\u{274C}' + "\r\n";
               }
             });
-          }catch{}
+          } catch {}
         }
       }
     }
@@ -439,12 +613,13 @@ if(btnShare != null){
           title: 'Advanced To-Do ' + listQuery,
           text: strItems + "\r\n" + "\r\n" + "Make Your Own List At:",
           url: 'https://jrodriguez142514-dev.github.io/advanced_todo/index.html',
-      })
+        })
         .then(() => console.log('Successful share'))
         .catch((error) => alert("Your Browser Is Not Supported")); //console.log('Error sharing', error));
-    }    
+    }
 
     strItems = '';
     listname = '';
 
-  }, false)};
+  }, false)
+};
