@@ -438,7 +438,7 @@ if(btnShare != null){
       navigator.share({
           title: 'Advanced To-Do ' + listQuery,
           text: strItems,
-          url: 'Make Your Own List At: ' + 'https://jrodriguez142514-dev.github.io/advanced_todo/index.html',
+          url: 'Make Your Own List At: https://jrodriguez142514-dev.github.io/advanced_todo/index.html',
       })
         .then(() => console.log('Successful share'))
         .catch((error) => alert("Your Browser Is Not Supported")); //console.log('Error sharing', error));
