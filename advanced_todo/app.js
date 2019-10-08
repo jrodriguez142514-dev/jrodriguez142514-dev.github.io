@@ -9,6 +9,7 @@ const button = document.querySelector('button')
 const btnShare = document.getElementById('btnShare')
 const submit = document.getElementById('Submit')
 const btnClear = document.getElementById('btnClear')
+const btnSort = document.getElementById('btnSort')
 const txtAreaImportList = document.getElementById('txtAreaImportList')
 
 
@@ -73,6 +74,62 @@ if (form != null) {
   });
 };
 
+
+function allowDrop(ev) {
+  ev.preventDefault();
+}
+
+function drag(ev) {
+  // console.log(ev.target.innerHTML);
+  // console.log("drag " + ev.target.id);
+  ev.dataTransfer.setData("text", ev.target.id);
+}
+
+function drop(ev) {
+  ev.preventDefault();
+
+  let dataItems = []
+  let moddedArr = [];
+  var data = ev.dataTransfer.getData("text");
+  // console.log("drop " + data);
+  let draggedElement = document.getElementById(data);
+  let targetElement = ev.target;
+  // console.log("drop " + targetElement.innerHTML)
+
+  targetElement.insertAdjacentElement("afterend", draggedElement)
+  
+  let childItems = "";
+  let children = ul.children;
+  for (i = 0; i < children.length; i++) {
+    if(i == children.length - 1){
+      childItems += children[i].id;
+    }
+    else{
+      childItems += children[i].id + ",";
+    }
+  }
+  
+  itemsArray = childItems.split(",");
+
+  let listQuery = getQueryString();
+
+  while (ul.firstChild) {
+    ul.removeChild(ul.firstChild);
+  }
+
+  if (itemsArray != "") {
+    itemsArray.forEach(item => {
+      makeList(item);
+    });
+  }
+
+  localStorage.setItem('items', JSON.stringify(itemsArray));
+
+  localStorage.setItem(listQuery + "_list", JSON.stringify(itemsArray));
+
+  itemsArray = []
+}
+
 function itemImportList(ilist) {
 
   let data = importListItems(ilist);
@@ -110,8 +167,6 @@ function itemDelete(item) {
   // makeList(item)
   item.value = ''
 }
-
-
 
 function itemComplete(item) {
 
@@ -181,12 +236,15 @@ let makeList = function todoList(item) {
 
   li.textContent = moditem;
   li.className = "list-group-item";
-  ul.appendChild(li)
+  ul.appendChild(li)  
+
   if (item.includes("complete")) {
+    li.id = moditem + "_complete";
     li.style.setProperty("text-decoration", "line-through");
     button.className = "btn btn-danger pull-right";
     faviconStatus.className = "fa fa-times";
   } else {
+    li.id = moditem + "_active";
     li.style.setProperty("text-decoration", "none !important");
     button.className = "btn btn-info pull-right";
     faviconStatus.className = "fa fa-check";
@@ -202,6 +260,11 @@ let makeList = function todoList(item) {
   btnDel.appendChild(faiconDel);
   faiconDel.className = "fa fa-trash-o";
 
+  li.setAttribute('draggable', true);
+  li.addEventListener( "dragstart" , function(event){
+    drag(event);
+  });
+ 
 };
 
 function getEmojiChars(text) {
@@ -416,6 +479,7 @@ function saveListItem() {
 }
 
 function getPreviousListsQuery(listQuery) {
+  let data = ''
 
   for (var i = 0; i < localStorage.length; i++) {
     let listname = localStorage.key(i);
@@ -446,6 +510,8 @@ function getPreviousListsQuery(listQuery) {
           previousLists.appendChild(a);
           a.appendChild(li);
 
+          data = JSON.parse(localStorage.getItem('items'));
+
 
         } catch (err) {
           return false;
@@ -474,6 +540,8 @@ function getPreviousListsQuery(listQuery) {
       }
     }
   }
+
+  return data
 }
 
 function getPreviousLists() {
@@ -508,7 +576,6 @@ function getPreviousLists() {
 }
 
 function getListItem() {
-
 
   data = saveListItem();
 
@@ -621,5 +688,47 @@ if (btnShare != null) {
     strItems = '';
     listname = '';
 
+  }, false)
+};
+
+if (btnSort != null) {
+  btnSort.addEventListener('click', function () {  
+    let listQuery = getQueryString();
+    let listname = "";
+    let itemsArr = [];
+
+    for (var i = 0; i < localStorage.length; i++) {
+      listname = localStorage.key(i);
+      if (listname.includes("list")) {
+        listname = listname.replace("_list", "");
+
+        if (listname == listQuery) {
+          try {
+            JSON.parse(localStorage.getItem(localStorage.key(i)))
+            let listitems = JSON.parse(localStorage.getItem(localStorage.key(i)))
+
+            listitems.forEach(function (litem) {
+              itemsArr.push(litem);
+            });
+          } catch {}
+        }
+      }
+    }
+
+    itemsArr.sort()
+    data = itemsArr;
+
+    while (ul.firstChild) {
+      ul.removeChild(ul.firstChild);
+    }
+  
+    if (data != "") {
+      data.forEach(item => {
+        makeList(item);
+      });
+    }
+
+    itemsArr = ''
+    
   }, false)
 };
