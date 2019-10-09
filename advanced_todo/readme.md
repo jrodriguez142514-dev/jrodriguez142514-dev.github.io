@@ -1,4 +1,6 @@
 # Advanced Todo Page
+<h5>***New*** Added a Sort Button to Auto Sort Your list Alphabetically!</h5>
+<h5>***New*** Added a Drag and Drop Feature. You can now Drag an item, move it, and Drop it on your list!</h5>
 <h5>**New** Share Feature! ***In Beta***</h5>
 <h5>**New** Delete Individual Items From List Feature!</h5>
 <h5>**New** Import List Feature!</h5>
