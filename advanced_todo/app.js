@@ -77,24 +77,24 @@ if (form != null) {
 
 function allowDrop(ev) {
   ev.preventDefault();
+  ev.stopPropagation();
 }
 
 function drag(ev) {
-  // console.log(ev.target.innerHTML);
-  // console.log("drag " + ev.target.id);
+  console.log(ev.target.innerHTML);
+  console.log("drag " + ev.target.id);
   ev.dataTransfer.setData("text", ev.target.id);
 }
 
 function drop(ev) {
   ev.preventDefault();
+  ev.stopPropagation();
 
-  let dataItems = []
-  let moddedArr = [];
   var data = ev.dataTransfer.getData("text");
-  // console.log("drop " + data);
+   console.log("drop " + data);
   let draggedElement = document.getElementById(data);
   let targetElement = ev.target;
-  // console.log("drop " + targetElement.innerHTML)
+   console.log("drop " + targetElement.innerHTML)
 
   targetElement.insertAdjacentElement("afterend", draggedElement)
   
@@ -238,6 +238,7 @@ let makeList = function todoList(item) {
   li.className = "list-group-item";
   ul.appendChild(li)  
 
+  li.style.setProperty("-webkit-user-drag", "element");
   if (item.includes("complete")) {
     li.id = moditem + "_complete";
     li.style.setProperty("text-decoration", "line-through");
@@ -264,7 +265,6 @@ let makeList = function todoList(item) {
   li.addEventListener( "dragstart" , function(event){
     drag(event);
   });
- 
 };
 
 function getEmojiChars(text) {
