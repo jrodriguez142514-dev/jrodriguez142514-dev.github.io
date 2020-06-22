@@ -233,6 +233,7 @@ function getName() {
 
 let makeList = function todoList(item) {
   let li = document.createElement('li');
+  let lispan = document.createElement('span');
   let button = document.createElement('button');
   let btnDel = document.createElement('button');
   let btnEdit = document.createElement('button');
@@ -264,9 +265,7 @@ let makeList = function todoList(item) {
     }, false);
   }
 
-  li.textContent = moditem;
-  li.className = "list-group-item";
-  ul.appendChild(li)  
+
 
   li.style.setProperty("-webkit-user-drag", "element");
   if (item.includes("complete")) {
@@ -285,16 +284,24 @@ let makeList = function todoList(item) {
   btnEdit.className = "btn btn-secondary pull-left ml-1";
 
 
-  li.appendChild(button);
+  lispan.appendChild(button);
   button.appendChild(faviconStatus);
 
-  li.appendChild(btnDel);
+  lispan.appendChild(btnDel);
   btnDel.appendChild(faiconDel);
   faiconDel.className = "fa fa-trash-o";
 
-  li.appendChild(btnEdit);
+  lispan.appendChild(btnEdit);
   btnEdit.appendChild(faiconEdit);
   faiconEdit.className = "fa fa-pencil-square-o";
+
+  li.className = "list-group-item";
+
+  //Append buttons and item text to list item
+  li.appendChild(lispan);
+  li.appendChild(document.createTextNode(moditem));
+
+  ul.appendChild(li)  
 
   li.setAttribute('draggable', true);
   li.addEventListener( "dragstart" , function(event){
@@ -434,9 +441,14 @@ function editExistingListItem(item, listQuery) {
                 });
 
                 var editInput = prompt("Edit your entry: " + item, item);
-                //var entry = this.parentElement.getElementsByClassName("userEntry")[0]; // get sibling userEntry element
-                litem = editInput + "_complete";
 
+                //Check if prompt is null: Restore Original Item if Null
+                if (editInput!= null){
+                  litem = editInput + "_complete";
+                }
+                else{
+                  litem = item + "_complete";
+                }
 
                 if(litem.includes("_complete")){
                   litem = litem.slice(0, litem.indexOf("_"));
