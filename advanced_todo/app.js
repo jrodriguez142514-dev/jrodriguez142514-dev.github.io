@@ -168,6 +168,28 @@ function itemDelete(item) {
   item.value = ''
 }
 
+function itemEdit(item) {
+
+  let listQuery = getQueryString();
+
+
+  let data = editExistingListItem(item, listQuery);
+
+  while (ul.firstChild) {
+    ul.removeChild(ul.firstChild);
+  }
+
+
+  if (data != "") {
+    data.forEach(item => {
+      makeList(item);
+    });
+  }
+
+  // makeList(item)
+  item.value = ''
+}
+
 function itemComplete(item) {
 
   let listQuery = getQueryString();
@@ -213,13 +235,17 @@ let makeList = function todoList(item) {
   let li = document.createElement('li');
   let button = document.createElement('button');
   let btnDel = document.createElement('button');
+  let btnEdit = document.createElement('button');
+
   let faviconStatus = document.createElement('span');
   let faiconDel = document.createElement('span');
+  let faiconEdit = document.createElement('span');
 
 
   moditem = item.slice(0, item.indexOf("_"));
   button.id = moditem;  
   btnDel.id = moditem + "_del";
+  btnEdit.id = moditem + "_edit";
 
   if (uri.includes("import") || uri.includes("add")) {
     
@@ -231,6 +257,10 @@ let makeList = function todoList(item) {
 
     btnDel.addEventListener('click', function () {
       itemDelete(btnDel.id);
+    }, false);
+
+    btnEdit.addEventListener('click', function () {
+      itemEdit(btnEdit.id);
     }, false);
   }
 
@@ -252,6 +282,7 @@ let makeList = function todoList(item) {
   }
 
   btnDel.className = "btn btn-danger pull-left";
+  btnEdit.className = "btn btn-secondary pull-left ml-1";
 
 
   li.appendChild(button);
@@ -260,6 +291,10 @@ let makeList = function todoList(item) {
   li.appendChild(btnDel);
   btnDel.appendChild(faiconDel);
   faiconDel.className = "fa fa-trash-o";
+
+  li.appendChild(btnEdit);
+  btnEdit.appendChild(faiconEdit);
+  faiconEdit.className = "fa fa-pencil-square-o";
 
   li.setAttribute('draggable', true);
   li.addEventListener( "dragstart" , function(event){
@@ -378,6 +413,64 @@ function deleteExistingListItem(item, listQuery) {
   return data
 }
 
+function editExistingListItem(item, listQuery) {
+  let data = ''
+
+  if (item != "") {
+    item = item.slice(0, item.indexOf("_"));
+    for (var i = 0; i < localStorage.length; i++) {
+      let listname = localStorage.key(i);
+      if (listname.includes("list")) {
+        if (listname == (listQuery + "_list")) {
+          try {
+            JSON.parse(localStorage.getItem(localStorage.key(i)))
+            let listitems = JSON.parse(localStorage.getItem(localStorage.key(i)))
+
+            listitems.forEach(function (litem, index) {
+
+              if (item == litem.slice(0, litem.indexOf("_"))) {
+                itemsArray = itemsArray.filter(function (item) {
+                  return item + "_active" != litem;
+                });
+
+                var editInput = prompt("Edit your entry: " + item, item);
+                //var entry = this.parentElement.getElementsByClassName("userEntry")[0]; // get sibling userEntry element
+                litem = editInput + "_complete";
+
+
+                if(litem.includes("_complete")){
+                  litem = litem.slice(0, litem.indexOf("_"));
+                  itemsArray.push(litem + "_active");
+                }
+                else{
+                  litem = litem.slice(0, litem.indexOf("_"));
+                  itemsArray.push(litem + "_complete");
+                }
+
+                
+              } else {
+                itemsArray.push(litem);
+              }
+            });
+          } catch {
+            return false
+          }
+        }
+      }
+    }
+
+    localStorage.setItem('items', JSON.stringify(itemsArray));
+
+    localStorage.setItem(listQuery + "_list", JSON.stringify(itemsArray));
+
+    data = JSON.parse(localStorage.getItem('items'));
+  }
+
+  itemsArray = []
+
+  return data
+}
+
 function modifyExistingListItemStatus(item, listQuery) {
   let data = ''
 
@@ -398,8 +491,17 @@ function modifyExistingListItemStatus(item, listQuery) {
                   return item + "_active" != litem;
                 });
 
-                litem = litem.slice(0, litem.indexOf("_"));
-                itemsArray.push(litem + "_complete");
+                
+                if(litem.includes("_complete")){
+                  litem = litem.slice(0, litem.indexOf("_"));
+                  itemsArray.push(litem + "_active");
+                }
+                else{
+                  litem = litem.slice(0, litem.indexOf("_"));
+                  itemsArray.push(litem + "_complete");
+                }
+
+                
               } else {
                 itemsArray.push(litem);
               }
@@ -500,7 +602,7 @@ function getPreviousListsQuery(listQuery) {
           let li = document.createElement('li');
 
 
-          a.href = "./selected.html?listname=" + listname;
+          a.href = "./selectedcopy.html?listname=" + listname;
           li.textContent = listname.replace("_list", "");
           if (li.textContent = listname) {
             li.className = "list-group-item active";
@@ -522,7 +624,7 @@ function getPreviousListsQuery(listQuery) {
         let li = document.createElement('li');
 
 
-        a.href = "./selected.html?listname=" + listname;
+        a.href = "./selectedcopy.html?listname=" + listname;
         li.textContent = listname.replace("_list", "");
         if (li.textContent = listname) {
           li.className = "list-group-item";
@@ -556,7 +658,7 @@ function getPreviousLists() {
         let li = document.createElement('li');
 
         listname = listname.replace("_list", "");
-        a.href = "./selected.html?listname=" + listname;
+        a.href = "./selectedcopy.html?listname=" + listname;
         li.textContent = listname.replace("_list", "");
         li.className = "list-group-item";
         previousLists.appendChild(a);
@@ -609,7 +711,7 @@ window.onload = function () {
   if(uri == "index.html") {
     getName();
     getPreviousLists();
-  } else if (uri == "selected.html") {
+  } else if (uri == "selectedcopy.html") {
     getName();
 
     if (listQuery != null) {
