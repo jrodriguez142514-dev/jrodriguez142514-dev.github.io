@@ -602,7 +602,7 @@ function getPreviousListsQuery(listQuery) {
           let li = document.createElement('li');
 
 
-          a.href = "./selectedcopy.html?listname=" + listname;
+          a.href = "./selected.html?listname=" + listname;
           li.textContent = listname.replace("_list", "");
           if (li.textContent = listname) {
             li.className = "list-group-item active";
@@ -624,7 +624,7 @@ function getPreviousListsQuery(listQuery) {
         let li = document.createElement('li');
 
 
-        a.href = "./selectedcopy.html?listname=" + listname;
+        a.href = "./selected.html?listname=" + listname;
         li.textContent = listname.replace("_list", "");
         if (li.textContent = listname) {
           li.className = "list-group-item";
@@ -658,7 +658,7 @@ function getPreviousLists() {
         let li = document.createElement('li');
 
         listname = listname.replace("_list", "");
-        a.href = "./selectedcopy.html?listname=" + listname;
+        a.href = "./selected.html?listname=" + listname;
         li.textContent = listname.replace("_list", "");
         li.className = "list-group-item";
         previousLists.appendChild(a);
@@ -711,7 +711,7 @@ window.onload = function () {
   if(uri == "index.html") {
     getName();
     getPreviousLists();
-  } else if (uri == "selectedcopy.html") {
+  } else if (uri == "selected.html") {
     getName();
 
     if (listQuery != null) {
