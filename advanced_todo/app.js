@@ -24,6 +24,7 @@ let getUrl = function () {
 let uri = getUrl();
 
 let itemsArray = []
+let listArray = [];
 
 if (form != null) {
   form.addEventListener('submit', function (event) {
@@ -148,68 +149,91 @@ function itemImportList(ilist) {
 
 function itemDelete(item) {
 
-  let listQuery = getQueryString();
+  if(uri == "delete.html"){
+    deleteExistingList(item);
 
+    let ulList = document.getElementById("previousLists");
+    while (ulList.firstChild) {
+      ulList.removeChild(ulList.firstChild);
+    }
 
-  let data = deleteExistingListItem(item, listQuery);
-
-  while (ul.firstChild) {
-    ul.removeChild(ul.firstChild);
+    listArray = [];
+    modifySavedLists();
   }
+  else{
+    let listQuery = getQueryString();
 
+    let data = deleteExistingListItem(item, listQuery);
 
-  if (data != "") {
-    data.forEach(item => {
-      makeList(item);
-    });
+    while (ul.firstChild) {
+      ul.removeChild(ul.firstChild);
+    }
+
+    if (data != "") {
+      data.forEach(item => {
+        makeList(item);
+      });
+    }
+
+    item.value = ''
   }
-
-  // makeList(item)
-  item.value = ''
 }
 
 function itemEdit(item) {
 
-  let listQuery = getQueryString();
+  if(uri == "delete.html"){
+    editExistingList(item);
 
+    let ulList = document.getElementById("previousLists");
+    while (ulList.firstChild) {
+      ulList.removeChild(ulList.firstChild);
+    }
 
-  let data = editExistingListItem(item, listQuery);
-
-  while (ul.firstChild) {
-    ul.removeChild(ul.firstChild);
+    listArray = [];
+    modifySavedLists();
   }
+  else{
+
+    let listQuery = getQueryString();
 
 
-  if (data != "") {
-    data.forEach(item => {
-      makeList(item);
-    });
+    let data = editExistingListItem(item, listQuery);
+
+    while (ul.firstChild) {
+      ul.removeChild(ul.firstChild);
+    }
+
+
+    if (data != "") {
+      data.forEach(item => {
+        makeList(item);
+      });
+    }
+
+    item.value = ''
   }
-
-  // makeList(item)
-  item.value = ''
 }
 
 function itemComplete(item) {
 
-  let listQuery = getQueryString();
+  if(uri != "delete.html"){
+    let listQuery = getQueryString();
 
-  let data = modifyExistingListItemStatus(item, listQuery);
+    let data = modifyExistingListItemStatus(item, listQuery);
 
-  while (ul.firstChild) {
-    ul.removeChild(ul.firstChild);
+    while (ul.firstChild) {
+      ul.removeChild(ul.firstChild);
+    }
+
+
+    if (data != "") {
+      data.forEach(item => {
+        makeList(item);
+      });
+    }
+
+    item.value = ''
   }
-
-
-  if (data != "") {
-    data.forEach(item => {
-      makeList(item);
-    });
-  }
-
-  // makeList(item)
-  item.value = ''
-
 }
 
 function getName() {
@@ -224,11 +248,9 @@ function getName() {
     } else {
       document.getElementById("greeting").innerHTML = "Hello, " + localStorage.getItem("name") + "!"
     }
-
   } else {
     document.getElementById("greeting").innerHTML = "Sorry, your browser does not support Web Storage...";
   }
-
 }
 
 let makeList = function todoList(item) {
@@ -301,7 +323,13 @@ let makeList = function todoList(item) {
   li.appendChild(lispan);
   li.appendChild(document.createTextNode(moditem));
 
-  ul.appendChild(li)  
+  if(uri == "delete.html"){
+    let ulList = document.getElementById("previousLists");
+    ulList.appendChild(li) 
+  }else{
+    ul.appendChild(li) 
+  }
+   
 
   li.setAttribute('draggable', true);
   li.addEventListener( "dragstart" , function(event){
@@ -319,6 +347,83 @@ function getEmojiChars(text) {
   }
 
   return str;
+}
+
+function deleteExistingList(item) {
+
+  if (item != "") {
+    item = item.slice(0, item.indexOf("_"));
+    for (var i = 0; i < localStorage.length; i++) {
+      let listname = localStorage.key(i);
+      if (listname.includes("list")) {
+        if (listname == (item + "_list")) {
+          try {
+
+            localStorage.removeItem(listname);           
+                      
+          } catch {
+            return false
+          }
+        }
+      }
+    }
+  }
+}
+
+function editExistingList(item) {
+
+  let data = '';
+  let oldListName = "";  
+
+  if (item != "") {
+    item = item.slice(0, item.indexOf("_"));
+    for (var i = 0; i < localStorage.length; i++) {
+      let listname = localStorage.key(i);
+      if (listname.includes("list")) {
+
+  
+        if (listname == (item + "_list")) {
+          oldListName = listname;
+          try {
+            var editInput = prompt("Edit your entry: " + item, item);
+
+            //Check if prompt is null: Restore Original Item if Null
+            if (editInput!= null){
+              item = editInput + "_list";
+            }
+            else{
+              item = item + "_list";
+            }
+          }
+          catch{ return false }
+
+          try {
+            JSON.parse(localStorage.getItem(localStorage.key(i)))
+            let listitems = JSON.parse(localStorage.getItem(localStorage.key(i)))
+
+            listitems.forEach(function (litem) {
+              itemsArray.push(litem);
+            });
+          } catch {
+            return false
+          }
+        }
+      }
+    }
+
+    deleteExistingList(oldListName);
+
+    localStorage.setItem('items', JSON.stringify(itemsArray));
+
+    localStorage.setItem(item, JSON.stringify(itemsArray));
+
+    data = JSON.parse(localStorage.getItem('items'));
+  }
+
+  itemsArray = []
+
+  return data
+
 }
 
 function importListItems(ilist) {
@@ -689,6 +794,63 @@ function getPreviousLists() {
   }
 }
 
+function getSavedLists(){
+
+  let data = '';
+  for (var i = 0; i < localStorage.length; i++) {
+    let listname = localStorage.key(i);
+    if (listname.includes("list")) {
+      try {
+        listArray.push(listname);
+
+        JSON.parse(localStorage.getItem(localStorage.key(i)))
+
+        let a = document.createElement('a');
+        let li = document.createElement('li');
+
+        listname = listname.replace("_list", "");
+        a.href = "./selected.html?listname=" + listname;
+        li.textContent = listname.replace("_list", "");
+        li.className = "list-group-item";
+        previousLists.appendChild(a);
+        a.appendChild(li);
+
+
+      } catch {
+        return false;
+      }
+    } else {
+      try {
+        let item = (localStorage.getItem(localStorage.key(i)))
+      } catch {
+        return false;
+      }
+    }
+  }
+  data = listArray;
+
+  return data;
+}
+
+function modifySavedLists(){
+  let data = getSavedLists();
+
+  let ulList = document.getElementById("previousLists");
+  while (ulList.firstChild) {
+    ulList.removeChild(ulList.firstChild);
+  }
+
+
+  if (data != "") {
+    data.forEach(item => {
+      makeList(item);
+    });
+  }
+  else{
+
+  }
+}
+
 function getListItem() {
 
   data = saveListItem();
@@ -717,13 +879,18 @@ function importRedirect() {
   window.location.href = "import.html";
 };
 
+function deleteRedirect() {
+  window.location.href = "delete.html";
+};
+
 window.onload = function () {
   let listQuery = getQueryString();
 
   if(uri == "index.html") {
     getName();
     getPreviousLists();
-  } else if (uri == "selected.html") {
+  } 
+  else if (uri == "selected.html") {
     getName();
 
     if (listQuery != null) {
@@ -732,7 +899,12 @@ window.onload = function () {
       getPreviousLists();
       getListItem();
     }
-  } else if (uri == "add.html") {
+  } 
+  else if (uri == "delete.html") {
+    getName();
+    modifySavedLists();
+  } 
+  else if (uri == "add.html") {
     getName();
   }
   else if (uri == "import.html") {
